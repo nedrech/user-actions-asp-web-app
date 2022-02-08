@@ -41,21 +41,26 @@ public class HomeController : Controller
         if (homeModel.SelectedIds.Any())
         {
             bool currentUserContains = false;
-            
-            foreach (var selectedId in homeModel.SelectedIds)
-            {
-                if (User.FindFirstValue(ClaimTypes.NameIdentifier) == selectedId)
-                    currentUserContains = true;
-                
-                var user = await _userManager.FindByIdAsync(selectedId);
-                user.LockoutEnd = DateTimeOffset.MaxValue;
 
-                await _userManager.UpdateSecurityStampAsync(user);
-            }
+            var task = Task.Run(async () =>
+            {
+                foreach (var selectedId in homeModel.SelectedIds)
+                {
+                    if (User.FindFirstValue(ClaimTypes.NameIdentifier) == selectedId)
+                        currentUserContains = true;
+
+                    var user = await _userManager.FindByIdAsync(selectedId);
+                    user.LockoutEnd = DateTimeOffset.MaxValue;
+
+                    await _userManager.UpdateSecurityStampAsync(user);
+                }
+            });
             
             if (currentUserContains)
                 return RedirectToAction("Logout", "Account",
                     new { reason = "You have blocked yourself" });
+
+            await task;
         }
 
         return RedirectToAction("Index");
@@ -80,20 +85,25 @@ public class HomeController : Controller
         if (homeModel.SelectedIds.Any())
         {
             bool currentUserContains = false;
-            
-            foreach (var selectedId in homeModel.SelectedIds)
-            {
-                if (User.FindFirstValue(ClaimTypes.NameIdentifier) == selectedId)
-                    currentUserContains = true;
-                
-                var user = await _userManager.FindByIdAsync(selectedId);
 
-                await _userManager.DeleteAsync(user);
-            }
-            
+            var task = Task.Run(async () =>
+            {
+                foreach (var selectedId in homeModel.SelectedIds)
+                {
+                    if (User.FindFirstValue(ClaimTypes.NameIdentifier) == selectedId)
+                        currentUserContains = true;
+
+                    var user = await _userManager.FindByIdAsync(selectedId);
+
+                    await _userManager.DeleteAsync(user);
+                }
+            });
+
             if (currentUserContains)
                 return RedirectToAction("Logout", "Account",
                     new { reason = "You have deleted your account" });
+
+            await task;
         }
         
         return RedirectToAction("Index");
