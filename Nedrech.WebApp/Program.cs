@@ -37,12 +37,6 @@ builder.Services.Configure<SecurityStampValidatorOptions>(options =>
 
 var app = builder.Build();
 
-app.UseRequestLocalization(opts => {
-    opts.AddSupportedCultures("en-US")
-        .AddSupportedUICultures("en-US")
-        .SetDefaultCulture("en-US");
-});
-
 app.UseStaticFiles();
 
 app.UseAuthentication();
