@@ -6,18 +6,21 @@
 }
 
 <div class="m-4 bg-white">
-    <form asp-controller="Home" method="post">
+    <form asp-controller="Home" asp-action="Index" method="post">
         <div class="container-fluid sticky-top">
             <div class="bg-white p-2 row navbar-text">
                 <div class="col">
-                    <button class="btn btn-link btn-square-sm" type="submit" title="Block users" asp-action="BlockUsers" >
+                    <button class="btn btn-link btn-square-sm" type="submit" name="Action" value="Block" title="Block user(s)" >
                         <i class="fas fa-lock fa-2x text-danger"></i>
                     </button>
-                    <button class="btn btn-link btn-square-sm" type="submit" title="Unblock users" asp-action="UnblockUsers" >
+                    <button class="btn btn-link btn-square-sm" type="submit" name="Action" value="Unblock" title="Unblock user(s)" >
                         <i class="fas fa-lock-open fa-2x text-success"></i>
                     </button>
-                    <button class="btn btn-link btn-square-sm" type="submit" title="Delete user" asp-action="DeleteUsers" >
+                    <button class="btn btn-link btn-square-sm" type="submit" name="Action" value="Delete" title="Delete user(s)" >
                         <i class="fas fa-times fa-2x text-danger"></i>
+                    </button>
+                    <button class="btn btn-link btn-square-sm" type="submit" name="Action" value="Refresh" title="Refresh users" >
+                        <i class="fas fa-sync-alt fa-2x"></i>
                     </button>
                 </div>
                 <div class="col text-end">

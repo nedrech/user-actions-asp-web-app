@@ -9,5 +9,13 @@ public class HomeModel
     public IEnumerable<ApplicationUser> Users { get; set; } = Enumerable.Empty<ApplicationUser>();
 
     [BindProperty]
+    public HomeModelAction Action { get; set; }
+
+    [BindProperty]
     public HashSet<string> SelectedIds { get; set; } = new();
+}
+
+public enum HomeModelAction
+{
+    Block, Unblock, Delete, Refresh
 }

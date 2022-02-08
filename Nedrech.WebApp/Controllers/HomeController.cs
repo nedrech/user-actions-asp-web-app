@@ -20,8 +20,9 @@ public class HomeController : Controller
         _context = context;
     }
 
-    public IActionResult Index() =>
-        View(new HomeModel
+    public IActionResult Index()
+    {
+        return View(new HomeModel
         {
             CurrentUsername = User.FindFirstValue(ClaimTypes.Name),
             Users = _userManager.Users
@@ -36,84 +37,74 @@ public class HomeController : Controller
                     LockoutEnd = u.LockoutEnd
                 })
         });
-
-    [HttpPost]
-    public async Task<IActionResult> BlockUsers(HomeModel homeModel)
-    {
-        if (homeModel.SelectedIds.Any())
-        {
-            bool currentUserContains = false;
-
-            var users = _userManager.Users
-                .Where(u => homeModel.SelectedIds.Contains(u.Id));
-
-            foreach (var user in users)
-            {
-                if (User.FindFirstValue(ClaimTypes.NameIdentifier) == user.Id)
-                    currentUserContains = true;
-                
-                user.LockoutEnd = DateTimeOffset.MaxValue;
-                user.SecurityStamp = Guid.NewGuid().ToString();
-            }
-
-            await _context.SaveChangesAsync();
-
-            if (currentUserContains)
-                return RedirectToAction("Logout", "Account",
-                    new { reason = "You have blocked yourself" });
-        }
-
-        return RedirectToAction("Index");
     }
 
     [HttpPost]
-    public async Task<IActionResult> UnblockUsers(HomeModel homeModel)
+    public async Task<IActionResult> Index(HomeModel homeModel)
     {
-        if (homeModel.SelectedIds.Any())
+        if (homeModel.SelectedIds.Any() && homeModel.Action != HomeModelAction.Refresh)
         {
+            Func<IQueryable<ApplicationUser>, IActionResult> action = homeModel.Action switch
+            {
+                HomeModelAction.Block => Block,
+                HomeModelAction.Unblock => Unblock,
+                HomeModelAction.Delete => Delete,
+                _ => throw new ArgumentOutOfRangeException()
+            };
+            
             var users = _userManager.Users
                 .Where(u => homeModel.SelectedIds.Contains(u.Id));
             
-            foreach (var user in users)
-            {
-                user.LockoutEnd = null;
-            }
+            var result = action(users);
 
             await _context.SaveChangesAsync();
+
+            return result;
         }
 
-        return RedirectToAction("Index");
+        return Index();
     }
-
-    [HttpPost]
-    public async Task<IActionResult> DeleteUsers(HomeModel homeModel)
+    
+    private IActionResult Block(IQueryable<ApplicationUser> users)
     {
-        if (homeModel.SelectedIds.Any())
-        {
-            bool currentUserContains = false;
-            
-            var users = _userManager.Users
-                .Where(u => homeModel.SelectedIds.Contains(u.Id));
-
-            foreach (var user in users)
-            {
-                if (User.FindFirstValue(ClaimTypes.NameIdentifier) == user.Id)
-                    currentUserContains = true;
-
-                _context.Users.Remove(user);
-            }
-
-            await _context.SaveChangesAsync();
-            
-            if (currentUserContains)
-                return RedirectToAction("Login", "Account",
-                    new { danger = "You have deleted your account" });
-        }
+        bool containsCurrentUser = false;
         
-        return RedirectToAction("Index");
+        foreach (var user in users.Where(u => u.LockoutEnd == null))
+        {
+            if (user.UserName == User.FindFirstValue(ClaimTypes.Name))
+                containsCurrentUser = true;
+            
+            user.LockoutEnd = DateTimeOffset.MaxValue;
+            user.SecurityStamp = Guid.NewGuid().ToString();
+        }
+
+        return containsCurrentUser ? RedirectToAction("Logout", "Account", new { reason = "You have blocked yourself" }) : Index();
+    }
+    
+    private IActionResult Unblock(IQueryable<ApplicationUser> users)
+    {
+        foreach (var user in users.Where(u => u.LockoutEnd != null))
+            user.LockoutEnd = null;
+
+        return Index();
     }
 
-    public async Task<IActionResult> AddUsers(int count, string pwd = "1")
+    private IActionResult Delete(IQueryable<ApplicationUser> users)
+    {
+        bool containsCurrentUser = false;
+
+        foreach (var user in users)
+        {
+            if (user.UserName == User.FindFirstValue(ClaimTypes.Name))
+                containsCurrentUser = true;
+            
+            _context.Users.Remove(user);
+        }
+
+        return containsCurrentUser ? RedirectToAction("Logout", "Account", new { reason = "You have deleted your account" }) : Index();
+    }
+
+    public async Task<IActionResult> Add(int count, string pwd = "1")
     {
         var httpClient = new HttpClient();
         
