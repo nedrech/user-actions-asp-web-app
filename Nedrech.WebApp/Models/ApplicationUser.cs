@@ -7,6 +7,4 @@ public class ApplicationUser : IdentityUser
     public DateTimeOffset? LastLoginDate { get; set; }
 
     public DateTimeOffset RegistrationDate { get; set; } = DateTimeOffset.Now;
-
-    public bool Blocked { get; set; }
 }
