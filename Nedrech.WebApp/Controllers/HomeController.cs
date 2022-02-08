@@ -27,15 +27,8 @@ public class HomeController : Controller
             CurrentUsername = User.FindFirstValue(ClaimTypes.Name),
             Users = _userManager.Users
                 .OrderByDescending(u => u.RegistrationDate)
-                .Select(u => new ApplicationUser
-                {
-                    Id = u.Id,
-                    UserName = u.UserName,
-                    Email = u.Email,
-                    RegistrationDate = u.RegistrationDate,
-                    LastLoginDate = u.LastLoginDate,
-                    LockoutEnd = u.LockoutEnd
-                })
+                .Select(u => new UserModel(
+                    u.Id, u.UserName, u.Email, u.RegistrationDate, u.LastLoginDate, u.LockoutEnd))
         });
     }
 

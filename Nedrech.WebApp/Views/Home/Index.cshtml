@@ -1,5 +1,4 @@
-﻿@using Nedrech.WebApp.Models
-@model HomeModel
+﻿@model HomeModel
 
 @{
     ViewBag.Title = "Users";
@@ -43,16 +42,17 @@
                 </tr>
                 </thead>
                 <tbody>
-                @foreach (var u in Model?.Users ?? Enumerable.Empty<ApplicationUser>())
+                @foreach (var u in Model?.Users ?? Enumerable.Empty<UserModel>())
                 {
-                    var marker = u.UserName == Model?.CurrentUsername ? "table-info" : "";
+                    var marker = u.Username == Model?.CurrentUsername ? "table-info" : "";
                     <tr class=@marker>
                         <td>
                             <input class="form-check-input" type="checkbox" value="@u.Id" name="SelectedIds"/>
                         </td>
-                        <td>@u.Id</td><td>@u.UserName</td><td>@u.Email</td><td>@u.RegistrationDate.ToString("G")</td>
-                        <td>@u.LastLoginDate?.ToString("G")</td>
-                        @if (u.LockoutEnd == null)
+                        <td>@u.Id</td><td>@u.Username</td><td>@u.Email</td>
+                        <td>@u.RegDateStr</td>
+                        <td>@u.LastLoginDateStr</td>
+                        @if (!u.Blocked)
                         {
                             <td class="text-success">Active</td>
                         }

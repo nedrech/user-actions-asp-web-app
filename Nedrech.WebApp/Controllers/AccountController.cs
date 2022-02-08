@@ -36,7 +36,7 @@ public class AccountController : Controller
 
             if (signInResult.Succeeded)
             {
-                user.LastLoginDate = DateTimeOffset.Now;
+                user.LastLoginDate = DateTimeOffset.UtcNow;
                 
                 await _userManager.UpdateAsync(user).ConfigureAwait(false);
                 
