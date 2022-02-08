@@ -9,13 +9,7 @@
   </PropertyGroup>
 
     <ItemGroup>
-      <Folder Include="Extensions" />
       <Folder Include="wwwroot\images" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <_ContentIncludedByDefault Remove="Views\Home\Index.cshtml" />
-      <_ContentIncludedByDefault Remove="Pages\Index.cshtml" />
     </ItemGroup>
 
     <ItemGroup>
