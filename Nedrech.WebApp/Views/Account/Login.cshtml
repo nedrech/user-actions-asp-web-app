@@ -10,8 +10,14 @@
             <h4 class="text-center">Sign in</h4>
         </div>
         <div class="card-body">
-            <div class="text-success mb-4 text-center">@Model?.InfoMessage</div>
-            <div class="text-danger mb-4 text-center">@Model?.DangerMessage</div>
+            @if (!string.IsNullOrEmpty(Model?.InfoMessage))
+            {
+                <div class="text-success mb-4 text-center">@Model?.InfoMessage</div>
+            }
+            @if (!string.IsNullOrEmpty(Model?.DangerMessage))
+            {
+                <div class="text-danger mb-4 text-center">@Model?.DangerMessage</div>
+            }
             <form asp-action="Login" asp-controller="Account" method="post">
                 <div class="form-outline">
                     <input asp-for="Username" class="form-control" required autofocus/>
