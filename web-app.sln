@@ -1,0 +1,16 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nedrech.WebApp", "Nedrech.WebApp\Nedrech.WebApp.csproj", "{48538092-1146-4B30-B2B3-CB8A2BADFF1E}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{48538092-1146-4B30-B2B3-CB8A2BADFF1E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{48538092-1146-4B30-B2B3-CB8A2BADFF1E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{48538092-1146-4B30-B2B3-CB8A2BADFF1E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{48538092-1146-4B30-B2B3-CB8A2BADFF1E}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal

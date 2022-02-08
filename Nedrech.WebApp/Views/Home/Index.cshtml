@@ -1,0 +1,69 @@
+﻿@using Nedrech.WebApp.Models
+@model HomeModel
+
+@{
+    ViewBag.Title = "Users";
+}
+
+<div class="m-4 bg-white">
+    <form asp-controller="Home" method="post">
+        <div class="container-fluid sticky-top">
+            <div class="bg-white p-2 row navbar-text">
+                <div class="col">
+                    <button class="btn btn-link btn-square-sm" type="submit" title="Block users" asp-action="BlockUsers" >
+                        <i class="fas fa-lock fa-2x text-danger"></i>
+                    </button>
+                    <button class="btn btn-link btn-square-sm" type="submit" title="Unblock users" asp-action="UnblockUsers" >
+                        <i class="fas fa-lock-open fa-2x text-success"></i>
+                    </button>
+                    <button class="btn btn-link btn-square-sm" type="submit" title="Delete user" asp-action="DeleteUsers" >
+                        <i class="fas fa-times fa-2x text-danger"></i>
+                    </button>
+                </div>
+                <div class="col text-end">
+                    <button class="btn btn-link fa-1x" disabled>
+                        <i class="btn-link fas fa-user"></i>
+                         @Model?.CurrentUsername
+                    </button>
+                    <a class="btn btn-link fa-1x ms-2" asp-controller="Account" asp-action="Logout">Log out</a>
+                </div>
+            </div>
+        </div>
+        <div class="opacity-80">
+            <table class="table table-sm table-striped table-bordered">
+                <thead>
+                <tr>
+                    <th>
+                        <input class="form-check-input" type="checkbox" id="checkAll"/>
+                    </th>
+                    <th>Id</th><th>Name</th><th>Email</th><th>Registation</th><th>Last Login</th><th>Status</th>
+                </tr>
+                </thead>
+                <tbody>
+                @foreach (var u in Model?.Users ?? Enumerable.Empty<ApplicationUser>())
+                {
+                    var marker = u.UserName == Model?.CurrentUsername ? "table-info" : "";
+                    <tr class=@marker>
+                        <td>
+                            <input class="form-check-input" type="checkbox" value="@u.Id" name="SelectedIds"/>
+                        </td>
+                        <td>@u.Id</td><td>@u.UserName</td><td>@u.Email</td><td>@u.RegistrationDate.ToString("G")</td>
+                        <td>@u.LastLoginDate?.ToString("G")</td>
+                        @if (u.LockoutEnd == null)
+                        {
+                            <td class="text-success">Active</td>
+                        }
+                        else
+                        {
+                            <td class="text-danger">Blocked</td>
+                        }
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
+    </form>
+</div>
+
+<script type="text/javascript" src="~/lib/jquery/jquery.min.js"></script>
+<script type="text/javascript" src="~/js/checkAll.js"></script>

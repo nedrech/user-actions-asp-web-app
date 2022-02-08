@@ -1,0 +1,18 @@
+{
+  "version": "1.0",
+  "defaultProvider": "cdnjs",
+  "libraries": [
+    {
+      "library": "mdb-ui-kit@3.10.2",
+      "destination": "wwwroot\\lib\\mdb-ui-kit"
+    },
+    {
+      "library": "font-awesome@5.15.4",
+      "destination": "wwwroot\\lib\\font-awesome"
+    },
+    {
+      "library": "jquery@3.6.0",
+      "destination": "wwwroot\\lib\\jquery"
+    }
+  ]
+}
