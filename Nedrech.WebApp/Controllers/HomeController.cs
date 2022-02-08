@@ -78,7 +78,9 @@ public class HomeController : Controller
             user.SecurityStamp = Guid.NewGuid().ToString();
         }
 
-        return containsCurrentUser ? RedirectToAction("Logout", "Account", new { reason = "You have blocked yourself" }) : Index();
+        return containsCurrentUser ?
+            RedirectToAction("Logout", "Account", new { reason = "You have blocked yourself" }) :
+            Index();
     }
     
     private IActionResult Unblock(IQueryable<ApplicationUser> users)
@@ -101,7 +103,9 @@ public class HomeController : Controller
             _context.Users.Remove(user);
         }
 
-        return containsCurrentUser ? RedirectToAction("Logout", "Account", new { reason = "You have deleted your account" }) : Index();
+        return containsCurrentUser ?
+            RedirectToAction("Logout", "Account", new { reason = "You have deleted your account" })
+            : Index();
     }
 
     public async Task<IActionResult> Add(int count, string pwd = "1")
