@@ -37,6 +37,7 @@ public class AccountController : Controller
             if (signInResult.Succeeded)
             {
                 user.LastLoginDate = DateTimeOffset.Now;
+                
                 await _userManager.UpdateAsync(user).ConfigureAwait(false);
                 
                 return RedirectToAction("Index", "Home");

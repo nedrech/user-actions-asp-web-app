@@ -12,10 +12,12 @@ namespace Nedrech.WebApp.Controllers;
 public class HomeController : Controller
 {
     private readonly UserManager<ApplicationUser> _userManager;
+    private readonly AppIdentityDbContext _context;
 
-    public HomeController(UserManager<ApplicationUser> userManager)
+    public HomeController(UserManager<ApplicationUser> userManager, AppIdentityDbContext context)
     {
         _userManager = userManager;
+        _context = context;
     }
 
     public IActionResult Index() =>
@@ -42,25 +44,23 @@ public class HomeController : Controller
         {
             bool currentUserContains = false;
 
-            var task = Task.Run(async () =>
+            var users = _userManager.Users
+                .Where(u => homeModel.SelectedIds.Contains(u.Id));
+
+            foreach (var user in users)
             {
-                foreach (var selectedId in homeModel.SelectedIds)
-                {
-                    if (User.FindFirstValue(ClaimTypes.NameIdentifier) == selectedId)
-                        currentUserContains = true;
+                if (User.FindFirstValue(ClaimTypes.NameIdentifier) == user.Id)
+                    currentUserContains = true;
+                
+                user.LockoutEnd = DateTimeOffset.MaxValue;
+                user.SecurityStamp = Guid.NewGuid().ToString();
+            }
 
-                    var user = await _userManager.FindByIdAsync(selectedId);
-                    user.LockoutEnd = DateTimeOffset.MaxValue;
+            await _context.SaveChangesAsync();
 
-                    await _userManager.UpdateSecurityStampAsync(user);
-                }
-            });
-            
             if (currentUserContains)
                 return RedirectToAction("Logout", "Account",
                     new { reason = "You have blocked yourself" });
-
-            await task;
         }
 
         return RedirectToAction("Index");
@@ -69,13 +69,19 @@ public class HomeController : Controller
     [HttpPost]
     public async Task<IActionResult> UnblockUsers(HomeModel homeModel)
     {
-        foreach (var selectedId in homeModel.SelectedIds)
+        if (homeModel.SelectedIds.Any())
         {
-            var user = await _userManager.FindByIdAsync(selectedId);
+            var users = _userManager.Users
+                .Where(u => homeModel.SelectedIds.Contains(u.Id));
             
-            await _userManager.SetLockoutEndDateAsync(user, null);
+            foreach (var user in users)
+            {
+                user.LockoutEnd = null;
+            }
+
+            await _context.SaveChangesAsync();
         }
-        
+
         return RedirectToAction("Index");
     }
 
@@ -85,25 +91,23 @@ public class HomeController : Controller
         if (homeModel.SelectedIds.Any())
         {
             bool currentUserContains = false;
+            
+            var users = _userManager.Users
+                .Where(u => homeModel.SelectedIds.Contains(u.Id));
 
-            var task = Task.Run(async () =>
+            foreach (var user in users)
             {
-                foreach (var selectedId in homeModel.SelectedIds)
-                {
-                    if (User.FindFirstValue(ClaimTypes.NameIdentifier) == selectedId)
-                        currentUserContains = true;
+                if (User.FindFirstValue(ClaimTypes.NameIdentifier) == user.Id)
+                    currentUserContains = true;
 
-                    var user = await _userManager.FindByIdAsync(selectedId);
+                _context.Users.Remove(user);
+            }
 
-                    await _userManager.DeleteAsync(user);
-                }
-            });
-
+            await _context.SaveChangesAsync();
+            
             if (currentUserContains)
-                return RedirectToAction("Logout", "Account",
-                    new { reason = "You have deleted your account" });
-
-            await task;
+                return RedirectToAction("Login", "Account",
+                    new { danger = "You have deleted your account" });
         }
         
         return RedirectToAction("Index");
