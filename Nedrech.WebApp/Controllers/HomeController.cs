@@ -13,7 +13,7 @@ public class HomeController : Controller
 {
     private readonly UserManager<ApplicationUser> _userManager;
 
-    public HomeController(UserManager<ApplicationUser> userManager, AppIdentityDbContext context)
+    public HomeController(UserManager<ApplicationUser> userManager)
     {
         _userManager = userManager;
     }
