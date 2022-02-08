@@ -36,7 +36,7 @@
                 <thead>
                 <tr>
                     <th>
-                        <input class="form-check-input" type="checkbox" id="checkAll"/>
+                        <input class="form-check-input" type="checkbox" id="checkedAll"/>
                     </th>
                     <th>Id</th><th>Name</th><th>Email</th><th>Registation</th><th>Last Login</th><th>Status</th>
                 </tr>
@@ -47,7 +47,7 @@
                     var marker = u.Username == Model?.CurrentUsername ? "table-info" : "";
                     <tr class=@marker>
                         <td>
-                            <input class="form-check-input" type="checkbox" value="@u.Id" name="SelectedIds"/>
+                            <input class="form-check-input checkedSingle" type="checkbox" value="@u.Id" name="SelectedIds"/>
                         </td>
                         <td>@u.Id</td><td>@u.Username</td><td>@u.Email</td>
                         <td>@u.RegDateStr</td>
