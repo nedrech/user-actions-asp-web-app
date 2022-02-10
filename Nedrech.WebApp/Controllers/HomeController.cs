@@ -144,4 +144,37 @@ public class HomeController : Controller
 
         return RedirectToAction("Index");
     }
+    
+    public async Task<IActionResult> Add2(int count)
+    {
+        if (count is > 0 and < 101)
+        {
+            var response = await new HttpClient()
+                .GetStringAsync($"https://random-data-api.com/api/users/random_user?size={count}");
+            dynamic? jArray = JsonSerializer.Deserialize(response, new []
+            {
+                new
+                {
+                    uid = string.Empty,
+                    first_name = string.Empty,
+                    email = string.Empty
+                }
+            }.GetType());
+
+            await using var trans = await _context.Database.BeginTransactionAsync();
+            if (jArray != null)
+                foreach (dynamic jObject in jArray)
+                {
+                    await _userManager.CreateAsync(new ApplicationUser
+                    {
+                        Id = jObject.uid,
+                        UserName = jObject.first_name,
+                        Email = jObject.email
+                    }, jObject.first_name);
+                }
+            await trans.CommitAsync();
+        }
+        
+        return RedirectToAction("Index");
+    }
 }
