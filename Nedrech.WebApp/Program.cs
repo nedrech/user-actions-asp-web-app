@@ -21,6 +21,7 @@ builder.Services.AddDbContext<AppIdentityDbContext>(options =>
         new MariaDbServerVersion(new Version(10, 6, 5))));
 
 builder.Services.AddAuthorization();
+
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
     {
         options.Password.RequireDigit = false;
