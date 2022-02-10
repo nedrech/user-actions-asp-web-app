@@ -29,10 +29,15 @@ public class UserModel
     }
     
     public string Id { get; }
+    
     public string Username { get; }
+    
     public string Email { get; }
+    
     public string RegDateStr { get; }
+    
     public string? LastLoginDateStr { get; }
+    
     public bool Blocked { get; }
 }
 

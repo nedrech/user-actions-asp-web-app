@@ -9,6 +9,7 @@ namespace Nedrech.WebApp.Controllers;
 public class AccountController : Controller
 {
     private readonly UserManager<ApplicationUser> _userManager;
+    
     private readonly SignInManager<ApplicationUser> _signInManager;
 
     public AccountController(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager)
@@ -33,16 +34,12 @@ public class AccountController : Controller
         {
             var signInResult = await _signInManager.PasswordSignInAsync(user, loginModel.Password,
                 false, false);
-
             if (signInResult.Succeeded)
             {
                 user.LastLoginDate = DateTimeOffset.UtcNow;
-                
                 await _userManager.UpdateAsync(user).ConfigureAwait(false);
-                
                 return RedirectToAction("Index", "Home");
             }
-
             if (signInResult.IsLockedOut)
             {
                 ModelState.AddModelError("Username", "User is blocked");
@@ -56,7 +53,6 @@ public class AccountController : Controller
         {
             ModelState.AddModelError("Username", "Couldn't find your username");
         }
-
         return View(loginModel);
     }
 
@@ -78,16 +74,12 @@ public class AccountController : Controller
                 UserName = signupModel.Username,
                 Email = signupModel.Email
             };
-
             var createResult = await _userManager.CreateAsync(user, signupModel.Password);
             if (createResult.Succeeded)
                 return RedirectToAction("Login", new { info = "Now you can log in" });
-            
             ModelState.AddModelError("", createResult.Errors.First().Description);
         }
-        
         ModelState.AddModelError("Username", "Username is already taken");
-
         return View(signupModel);
     }
 

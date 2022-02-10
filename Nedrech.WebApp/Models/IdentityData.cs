@@ -5,7 +5,6 @@ namespace Nedrech.WebApp.Models;
 public static class IdentityData
 {
     public static async void EnsureMigrated(IApplicationBuilder app) {
-
         AppIdentityDbContext context = app.ApplicationServices
             .CreateScope().ServiceProvider
             .GetRequiredService<AppIdentityDbContext>();

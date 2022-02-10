@@ -12,6 +12,7 @@ namespace Nedrech.WebApp.Controllers;
 public class HomeController : Controller
 {
     private readonly UserManager<ApplicationUser> _userManager;
+    
     private readonly AppIdentityDbContext _context;
 
     public HomeController(UserManager<ApplicationUser> userManager, AppIdentityDbContext context)
@@ -44,33 +45,25 @@ public class HomeController : Controller
                 HomeModelAction.Delete => Delete,
                 _ => throw new ArgumentOutOfRangeException()
             };
-            
             var users = _userManager.Users
                 .Where(u => homeModel.SelectedIds.Contains(u.Id));
-            
             var result = action(users);
-
             await _context.SaveChangesAsync();
-
             return result;
         }
-
         return Index();
     }
     
     private IActionResult Block(IQueryable<ApplicationUser> users)
     {
         bool containsCurrentUser = false;
-        
         foreach (var user in users.Where(u => u.LockoutEnd == null))
         {
             if (user.UserName == User.FindFirstValue(ClaimTypes.Name))
                 containsCurrentUser = true;
-            
             user.LockoutEnd = DateTimeOffset.MaxValue;
             user.SecurityStamp = Guid.NewGuid().ToString();
         }
-
         return containsCurrentUser ?
             RedirectToAction("Logout", "Account", new { reason = "You have blocked yourself" }) :
             Index();
@@ -80,22 +73,18 @@ public class HomeController : Controller
     {
         foreach (var user in users.Where(u => u.LockoutEnd != null))
             user.LockoutEnd = null;
-
         return Index();
     }
 
     private IActionResult Delete(IQueryable<ApplicationUser> users)
     {
         bool containsCurrentUser = false;
-
         foreach (var user in users)
         {
             if (user.UserName == User.FindFirstValue(ClaimTypes.Name))
                 containsCurrentUser = true;
-            
             _context.Users.Remove(user);
         }
-
         return containsCurrentUser ?
             RedirectToAction("Logout", "Account", new { reason = "You have deleted your account" })
             : Index();
@@ -104,11 +93,9 @@ public class HomeController : Controller
     public async Task<IActionResult> Add(int count, string pwd = "1")
     {
         var httpClient = new HttpClient();
-        
         for (int i = 0; i < count; i++)
         {
             var response = await httpClient.GetStringAsync("https://randomuser.me/api/");
-
             dynamic? jObject = JsonSerializer.Deserialize(response, new
             {
                 results = new []
@@ -123,7 +110,6 @@ public class HomeController : Controller
                     }
                 }
             }.GetType());
-
             var result = jObject?.results[0];
             ApplicationUser user = await _userManager.FindByNameAsync(result?.login.username);
             if (user == null)
@@ -141,7 +127,6 @@ public class HomeController : Controller
                 i--;
             }
         }
-
         return RedirectToAction("Index");
     }
     
@@ -160,7 +145,6 @@ public class HomeController : Controller
                     email = string.Empty
                 }
             }.GetType());
-
             await using var trans = await _context.Database.BeginTransactionAsync();
             if (jArray != null)
                 foreach (dynamic jObject in jArray)
@@ -174,7 +158,6 @@ public class HomeController : Controller
                 }
             await trans.CommitAsync();
         }
-        
         return RedirectToAction("Index");
     }
 }
