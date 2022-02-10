@@ -1,14 +1,11 @@
 ﻿FROM mcr.microsoft.com/dotnet/aspnet:6.0 AS base
 WORKDIR /app
 EXPOSE 80
-EXPOSE 443
 
 FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
 WORKDIR /src
-COPY ["Nedrech.WebApp/Nedrech.WebApp.csproj", "Nedrech.WebApp/"]
-RUN dotnet restore "Nedrech.WebApp/Nedrech.WebApp.csproj"
 COPY . .
-WORKDIR "/src/Nedrech.WebApp"
+RUN dotnet restore "Nedrech.WebApp.csproj"
 RUN dotnet build "Nedrech.WebApp.csproj" -c Release -o /app/build
 
 FROM build AS publish
