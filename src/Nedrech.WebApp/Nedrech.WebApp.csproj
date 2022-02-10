@@ -5,32 +5,32 @@
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
         <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
-      <UserSecretsId>06a455db-d330-4c2b-b454-a825b74e47cf</UserSecretsId>
-  </PropertyGroup>
+        <UserSecretsId>06a455db-d330-4c2b-b454-a825b74e47cf</UserSecretsId>
+    </PropertyGroup>
 
     <ItemGroup>
-      <Folder Include="wwwroot\images" />
+        <Folder Include="wwwroot\images"/>
     </ItemGroup>
 
     <ItemGroup>
-      <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="6.0.1" />
-      <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="6.0.1">
-        <PrivateAssets>all</PrivateAssets>
-        <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-      </PackageReference>
-      <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="6.0.1" />
+        <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="6.0.1"/>
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="6.0.1">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+        <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="6.0.1"/>
     </ItemGroup>
 
     <ItemGroup>
-      <Content Include="..\..\..\..\AppData\Roaming\Microsoft\UserSecrets\06a455db-d330-4c2b-b454-a825b74e47cf\secrets.json">
-        <Link>secrets.json</Link>
-      </Content>
-      <Content Include="..\..\.gitignore">
-        <Link>.gitignore</Link>
-      </Content>
-      <Content Include="..\..\README.md">
-        <Link>README.md</Link>
-      </Content>
+        <Content Include="..\..\..\..\AppData\Roaming\Microsoft\UserSecrets\06a455db-d330-4c2b-b454-a825b74e47cf\secrets.json">
+            <Link>secrets.json</Link>
+        </Content>
+        <Content Include="..\..\.gitignore">
+            <Link>.gitignore</Link>
+        </Content>
+        <Content Include="..\..\README.md">
+            <Link>README.md</Link>
+        </Content>
     </ItemGroup>
 
 </Project>
