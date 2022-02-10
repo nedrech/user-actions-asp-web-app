@@ -2,4 +2,4 @@
 .idea/
 bin/
 obj/
-Nedrech.WebApp/wwwroot/lib
+src/Nedrech.WebApp/wwwroot/lib/
