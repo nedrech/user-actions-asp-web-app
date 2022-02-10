@@ -22,6 +22,9 @@
     </ItemGroup>
 
     <ItemGroup>
+      <Content Include="..\..\..\..\AppData\Roaming\Microsoft\UserSecrets\06a455db-d330-4c2b-b454-a825b74e47cf\secrets.json">
+        <Link>secrets.json</Link>
+      </Content>
       <Content Include="..\..\.gitignore">
         <Link>.gitignore</Link>
       </Content>
