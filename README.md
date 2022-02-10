@@ -12,6 +12,6 @@
 [app.darky.tech](https://app.darky.tech/)
 </br>Доступна регистрация с любым паролем от 1го символа.
 ## Скриншоты
-![Login Page](https://raw.githubusercontent.com/nedrech/user-actions-asp-web-app/master/screenshots/login-page.png)
+![Login Page](https://raw.githubusercontent.com/nedrech/user-actions-asp-web-app/master/screenshots/signin-page.png)
 ![Sign Up Page](https://raw.githubusercontent.com/nedrech/user-actions-asp-web-app/master/screenshots/signup-page.png)
-![Users Page](https://raw.githubusercontent.com/nedrech/user-actions-asp-web-app/master/screenshots/users%3Dpage.png)
+![Users Page](https://raw.githubusercontent.com/nedrech/user-actions-asp-web-app/master/screenshots/users-page.png)
