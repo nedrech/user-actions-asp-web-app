@@ -1,0 +1,91 @@
+﻿@page "/messages"
+@inherits OwningComponentBase<IMessageRepository>
+
+<div class="m-4">
+    <table class="table table-striped">
+        <thead class="sticky-top">
+        <tr class="bg-white">
+            <th colspan="4" style="border-bottom: none">
+                <div class="row">
+                    <div class="col">
+                        <a class="btn btn-link btn-square-sm" href="/">
+                            <i class="fas fa-arrow-left fa-2x"></i>
+                        </a>
+                        <a class="btn btn-link btn-square-sm" href="/messages/new">
+                            <i class="fas fa-paper-plane fa-2x"></i>
+                        </a>
+                    </div>
+                    <div class="col d-flex justify-content-center align-content-center">
+                        <h4>Messages</h4>
+                    </div>
+                    <div class="col text-end">
+                        <button class="btn btn-link btn-lg text-end" disabled>
+                            <i class="btn-link fas fa-user fa-1x"></i>
+                            <b class="text-black">@CurrentUserName</b>
+                        </button>
+                        <a class="btn btn-link btn-lg ms-2" href="/account/logout">Log out</a>
+                    </div>
+                </div>
+            </th>
+        </tr>
+        <tr class="bg-white">
+            <th>From</th>
+            <th>Subject</th>
+            <th>Date & Time</th>
+            <th></th>
+        </tr>
+        </thead>
+        <tbody class="bg-white">
+        @foreach (var m in _myMessages)
+        {
+            <tr>
+                <td>@m.SenderUserName</td>
+                <td>@m.Subject</td>
+                <td>@m.DateTimeStr</td>
+                <td>
+                    <a class="btn btn-link btn-lg" href="/messages/@m.Id">Read</a>
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
+</div>
+
+@code
+{
+    private IMessageRepository Repository => Service;
+
+    [Inject]
+    public AuthenticationStateProvider AuthProvider { get; set; } = null!;
+
+    [Inject]
+    public UserManager<ApplicationUser> UserManager { get; set; } = null!;
+
+    private IEnumerable<ApplicationMessage> _myMessages = Enumerable.Empty<ApplicationMessage>();
+
+    private string CurrentUserName { get; set; } = string.Empty;
+    
+    private string CurrentUserId { get; set; } = string.Empty;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await AuthProvider.GetAuthenticationStateAsync();
+        CurrentUserId = authState.User.FindFirstValue(ClaimTypes.NameIdentifier);
+        CurrentUserName = authState.User.FindFirstValue(ClaimTypes.Name);
+        var _ = new Timer(_ => { InvokeAsync(UpdateData); }, null, 0, 2000);
+    }
+
+    private void UpdateData()
+    {
+        var messages = Repository.Messages
+            .Where(m => m.ReceiverUserId == CurrentUserId)
+            .OrderByDescending(m => m.Date)
+            .ToList();
+
+        if (_myMessages.Count() != messages.Count())
+        {
+            _myMessages = messages;
+            StateHasChanged();
+        }
+    }
+}

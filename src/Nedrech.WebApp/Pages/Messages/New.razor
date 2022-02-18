@@ -1,0 +1,115 @@
+﻿@page "/messages/new"
+@using Nedrech.WebApp.Models.ViewModels
+@inherits OwningComponentBase<IMessageRepository>
+@inject NavigationManager NavigationManager
+
+<div class="m-4">
+    <table class="table table-striped">
+        <thead class="sticky-top">
+        <tr class="bg-white">
+            <th colspan="3" style="border-bottom: none">
+                <div class="row">
+                    <div class="col">
+                        <a class="btn btn-link btn-square-sm" href="/messages">
+                            <i class="fas fa-arrow-left fa-2x"></i>
+                        </a>
+                    </div>
+                    <div class="col d-flex justify-content-center align-content-center">
+                        <h4>New message</h4>
+                    </div>
+                    <div class="col text-end">
+                        <button class="btn btn-link btn-lg text-end" disabled>
+                            <i class="btn-link fas fa-user fa-1x"></i>
+                            <b class="text-black">@CurrentUserName</b>
+                        </button>
+                        <a class="btn btn-link btn-lg ms-2" href="/account/logout">Log out</a>
+                    </div>
+                </div>
+            </th>
+        </tr>
+        </thead>
+        <tbody class="bg-white">
+        <div class="container">
+            <div class="row">
+                <label class="fw-bold">To</label>
+                <span>[Select the recipient of the message (Ctrl + left click for multiple)]</span>
+                <select @bind="Model.ReceiverIds" class="form-select" multiple>
+                    @foreach (var u in Users)
+                    {
+                        <option value="@u.Id">@u.UserName</option>
+                    }
+                </select>
+            </div>
+            <div class="row">
+                <label class="fw-bold">Subject</label>
+                <input @bind="Model.Subject"
+                       type="text"
+                       placeholder="Subject of your message"
+                       required
+                       autofocus/>
+            </div>
+            <div class="row">
+                <label class="fw-bold">Message</label>
+                <textarea class="w-100" rows="10"
+                          @bind="Model.Message"
+                          placeholder="Your message"
+                          required></textarea>
+            </div>
+            <div class="row">
+                <a class="btn btn-primary btn-lg" @onclick="SendMessage">Send Message</a>
+            </div>
+        </div>
+        </tbody>
+    </table>
+</div>
+
+@code {
+    private MessageModel Model = new();
+
+    private IEnumerable<ApplicationUser> Users { get; set; } = Enumerable.Empty<ApplicationUser>();
+
+    [Inject]
+    public UserManager<ApplicationUser> UserManager { get; set; } = null!;
+
+    [Inject]
+    public AuthenticationStateProvider AuthProvider { get; set; } = null!;
+
+    private IMessageRepository Repository => Service;
+
+    private string CurrentUserId { get; set; } = string.Empty;
+    
+    private string CurrentUserName { get; set; } = string.Empty;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await AuthProvider.GetAuthenticationStateAsync();
+        CurrentUserId = authState.User.FindFirstValue(ClaimTypes.NameIdentifier);
+        CurrentUserName = authState.User.FindFirstValue(ClaimTypes.Name);
+        Users = UserManager.Users
+            .Where(u => u.Id != CurrentUserId)
+            .Select(u => new ApplicationUser
+            {
+                Id = u.Id,
+                UserName = u.UserName
+            });
+    }
+
+    private async Task SendMessage()
+    {
+        var subject = Model.Subject.Trim();
+        var message = Model.Message.Trim();
+        if (string.IsNullOrWhiteSpace(subject) || string.IsNullOrWhiteSpace(message))
+            return;
+        var messages = Model.ReceiverIds.Select(userId => new ApplicationMessage
+        {
+            SenderUserName = CurrentUserName,
+            SenderUserId = CurrentUserId,
+            ReceiverUserId = userId,
+            Subject = subject,
+            Message = message
+        }).ToList();
+        await Repository.CreateMessageRangeAsync(messages);
+        NavigationManager.NavigateTo("/messages");
+    }
+
+}

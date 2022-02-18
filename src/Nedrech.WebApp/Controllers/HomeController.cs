@@ -13,9 +13,9 @@ public class HomeController : Controller
 {
     private readonly UserManager<ApplicationUser> _userManager;
     
-    private readonly AppIdentityDbContext _context;
+    private readonly ApplicationDbContext _context;
 
-    public HomeController(UserManager<ApplicationUser> userManager, AppIdentityDbContext context)
+    public HomeController(UserManager<ApplicationUser> userManager, ApplicationDbContext context)
     {
         _userManager = userManager;
         _context = context;

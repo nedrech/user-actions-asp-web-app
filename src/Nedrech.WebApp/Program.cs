@@ -16,7 +16,7 @@ MySqlConnectionStringBuilder conStrBuilder =
     Database = builder.Configuration["DbName"]
 };
 
-builder.Services.AddDbContext<AppIdentityDbContext>(options =>
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseMySql(conStrBuilder.ConnectionString,
         new MariaDbServerVersion(new Version(10, 6, 5))));
 
@@ -31,10 +31,18 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
         options.Password.RequiredUniqueChars = 0;
         options.Password.RequireNonAlphanumeric = false;
     })
-    .AddEntityFrameworkStores<AppIdentityDbContext>();
+    .AddEntityFrameworkStores<ApplicationDbContext>();
+
+builder.Services.AddScoped<IMessageRepository, MessageRepository>();
 
 builder.Services.Configure<SecurityStampValidatorOptions>(options =>
     options.ValidationInterval = TimeSpan.Zero);
+
+builder.Services.AddRazorPages();
+
+builder.Services.AddServerSideBlazor();
+
+builder.Services.AddDistributedMemoryCache();
 
 var app = builder.Build();
 
@@ -44,6 +52,10 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapDefaultControllerRoute();
+
+app.MapRazorPages();
+app.MapBlazorHub();
+app.MapFallbackToPage("/messages/{*catchall}", "/Messages/Index");
 
 IdentityData.EnsureMigrated(app);
 
