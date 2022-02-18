@@ -1,0 +1,83 @@
+﻿@page "/messages/{id}"
+@inherits OwningComponentBase<IMessageRepository>
+
+<div class="m-4">
+    <table class="table table-striped">
+        <thead class="sticky-top">
+        <tr class="bg-white">
+            <th colspan="3" style="border-bottom: none">
+                <div class="row">
+                    <div class="col">
+                        <a class="btn btn-link btn-square-sm" href="/messages">
+                            <i class="fas fa-arrow-left fa-2x"></i>
+                        </a>
+                    </div>
+                    <div class="col d-flex justify-content-center align-content-center">
+                        <h4>Message</h4>
+                    </div>
+                    <div class="col text-end">
+                        <button class="btn btn-link btn-lg text-end" disabled>
+                            <i class="btn-link fas fa-user fa-1x"></i>
+                            <b class="text-black">@CurrentUserName</b>
+                        </button>
+                        <a class="btn btn-link btn-lg ms-2" href="/account/logout">Log out</a>
+                    </div>
+                </div>
+            </th>
+        </tr>
+        </thead>
+        <tbody class="bg-white">
+        <div class="container">
+            <div class="row">
+                <label class="fw-bold">From</label>
+                <span>@Model?.SenderUserName</span>
+            </div>
+            <div class="row">
+                <label class="fw-bold">Subject</label>
+                <label>@Model?.Subject</label>
+            </div>
+            <div class="row">
+                <label class="fw-bold">Message</label>
+                <text>@Model?.Message</text>
+            </div>
+        </div>
+        </tbody>
+    </table>
+</div>
+
+@code {
+
+    public IMessageRepository Repository => Service;
+    
+    [Parameter]
+    public string Id { get; set; } = string.Empty;
+
+    [Inject]
+    public NavigationManager? NavManager { get; set; } = null!;
+
+    [Inject]
+    public AuthenticationStateProvider AuthProvider { get; set; } = null!;
+
+    private ApplicationMessage? Model { get; set; }
+    
+    private string CurrentUserName { get; set; } = string.Empty;
+    
+    protected override async Task OnInitializedAsync() {
+        var authState = await AuthProvider.GetAuthenticationStateAsync();
+        CurrentUserName = authState.User.FindFirstValue(ClaimTypes.Name);
+        var currentUserId = authState.User.FindFirstValue(ClaimTypes.NameIdentifier);
+        Model = await Repository.Messages
+            .Where(m => m.Id == Id && m.ReceiverUserId == currentUserId)
+            .Select(m => new ApplicationMessage
+            {
+                SenderUserName = m.SenderUserName,
+                Subject = m.Subject,
+                Message = m.Message,
+                Date = m.Date
+            }).SingleOrDefaultAsync();
+        if (Model == null)
+        {
+            NavManager.NavigateTo("/messages");
+        }
+    }
+}

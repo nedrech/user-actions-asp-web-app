@@ -1,0 +1,21 @@
+﻿@page "/messages"
+@{ Layout = null; }
+@using Microsoft.AspNetCore.Authorization
+@attribute [Authorize]
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebApp - Messages</title>
+    <link href="~/lib/mdb-ui-kit/mdb.min.css" rel="stylesheet"/>
+    <link rel="stylesheet" href="~/lib/font-awesome/css/all.min.css"/>
+    <link rel="stylesheet" href="~/css/bg.css"/>
+    <base href="/"/>
+</head>
+<body>
+<component type="typeof(Routed)" render-mode="Server"/>
+<script src="~/lib/mdb-ui-kit/mdb.min.js"></script>
+<script src="/_framework/blazor.server.js"></script>
+</body>
+</html>

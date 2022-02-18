@@ -10,7 +10,7 @@ using Nedrech.WebApp.Models;
 
 namespace Nedrech.WebApp.Migrations
 {
-    [DbContext(typeof(AppIdentityDbContext))]
+    [DbContext(typeof(ApplicationDbContext))]
     [Migration("20220207171059_Initial")]
     partial class Initial
     {
